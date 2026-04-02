@@ -1,27 +1,28 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class BulletMoveForward : MonoBehaviour {
+[RequireComponent(typeof(Rigidbody2D))]
+public class BulletMoveForward : MonoBehaviour
+{
+    [SerializeField] private float acceleration = 50f;
+    [SerializeField] private float initialVelocity = 5f;
 
-    private float acceleration = 50f;
+    private Rigidbody2D rb;
 
-    private float initialVelocity = 5f;
-
-    private Rigidbody2D ourRigidbody;
-
-    // Use this for initialization
-    void Start()
+    private void Awake()
     {
-        ourRigidbody = GetComponent<Rigidbody2D>();
-
-        ourRigidbody.velocity = Vector2.up * initialVelocity;
+        rb = GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Start()
     {
-        Vector2 ForceToAdd = Vector2.up * acceleration * Time.deltaTime;
+        // Set initial upward velocity
+        rb.velocity = Vector2.up * initialVelocity;
+    }
 
-        ourRigidbody.AddForce(ForceToAdd);
+    private void FixedUpdate()
+    {
+        // Apply continuous upward force
+        Vector2 force = Vector2.up * acceleration * Time.fixedDeltaTime;
+        rb.AddForce(force);
     }
 }
