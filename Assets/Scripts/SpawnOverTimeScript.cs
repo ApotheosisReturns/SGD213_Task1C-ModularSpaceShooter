@@ -1,42 +1,42 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class SpawnOverTimeScript : MonoBehaviour
 {
-
-    // Object to spawn
-    [SerializeField]
-    private GameObject spawnObject;
-
-    // Delay between spawns
-    [SerializeField]
-    private float spawnDelay = 2f;
+    [SerializeField] private GameObject spawnObject;
+    [SerializeField] private float spawnDelay = 2f;
 
     private Renderer ourRenderer;
 
-    // Use this for initialization
-    void Start()
+    private void Awake()
     {
-
         ourRenderer = GetComponent<Renderer>();
-
-        // Stop our Spawner from being visible!
-        ourRenderer.enabled = false;
-
-        // Call the given function after spawnDelay seconds, 
-        // and then repeatedly call it after spawnDelay seconds.
-        InvokeRepeating("Spawn", spawnDelay, spawnDelay);
     }
 
-    void Spawn()
+    private void Start()
     {
-        float x1 = transform.position.x - ourRenderer.bounds.size.x / 2;
-        float x2 = transform.position.x + ourRenderer.bounds.size.x / 2;
+        // Hide the spawner visually (if it has a renderer)
+        if (ourRenderer != null)
+        {
+            ourRenderer.enabled = false;
+        }
 
-        // Randomly pick a point within the spawn object
-        Vector2 spawnPoint = new Vector2(Random.Range(x1, x2), transform.position.y);
+        InvokeRepeating(nameof(Spawn), spawnDelay, spawnDelay);
+    }
 
-        // Spawn the object at the 'spawnPoint' position
+    private void Spawn()
+    {
+        if (spawnObject == null || ourRenderer == null) return;
+
+        float halfWidth = ourRenderer.bounds.size.x * 0.5f;
+
+        float x1 = transform.position.x - halfWidth;
+        float x2 = transform.position.x + halfWidth;
+
+        Vector2 spawnPoint = new Vector2(
+            Random.Range(x1, x2),
+            transform.position.y
+        );
+
         Instantiate(spawnObject, spawnPoint, Quaternion.identity);
     }
 }

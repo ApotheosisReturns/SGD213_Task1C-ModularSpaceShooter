@@ -1,27 +1,28 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class EnemyMoveForward : MonoBehaviour {
+[RequireComponent(typeof(Rigidbody2D))]
+public class EnemyMoveForward : MonoBehaviour
+{
+    [SerializeField] private float acceleration = 75f;
+    [SerializeField] private float initialVelocity = 2f;
 
-    private float acceleration = 75f;
+    private Rigidbody2D rb;
 
-    private float initialVelocity = 2f;
-
-    private Rigidbody2D ourRigidbody;
-
-    // Use this for initialization
-    void Start()
+    private void Awake()
     {
-        ourRigidbody = GetComponent<Rigidbody2D>();
-
-        ourRigidbody.velocity = Vector2.down * initialVelocity;
+        rb = GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Start()
     {
-        Vector2 ForceToAdd = Vector2.down * acceleration * Time.deltaTime;
+        // Set initial downward velocity
+        rb.velocity = Vector2.down * initialVelocity;
+    }
 
-        ourRigidbody.AddForce(ForceToAdd);
+    private void FixedUpdate()
+    {
+        // Apply continuous downward force
+        Vector2 force = Vector2.down * acceleration * Time.fixedDeltaTime;
+        rb.AddForce(force);
     }
 }
