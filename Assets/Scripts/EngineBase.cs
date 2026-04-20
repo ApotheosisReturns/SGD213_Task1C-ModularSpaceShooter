@@ -1,32 +1,21 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
+/// <summary>
+/// Base movement engine used by both Player and Enemy.
+/// Handles acceleration, deceleration and directional movement.
+/// </summary>
 public class EngineBase : MonoBehaviour
 {
-    // acceleration indicates how fast the enemy accelerates
-    [SerializeField]
-    private float acceleration = 5000f;
+    [Header("Movement Settings")]
+    [SerializeField] protected float moveSpeed = 5f;
 
-    // local references
-    private Rigidbody2D ourRigidbody;
-
-    void Start()
-    {
-        // populate ourRigidbody
-        ourRigidbody = GetComponent<Rigidbody2D>();
-    }
+    protected Vector3 movementDirection;
 
     /// <summary>
-    /// Accelerate takes a direction as a parameter, and applies a force in this provided direction
-    /// to ourRigidbody, based on the acceleration variables and the delta time.
+    /// Moves the object based on the movementDirection vector.
     /// </summary>
-    /// <param name="horizontalInput">A direction vector, expected to be a unit vector (magnitude of 1).</param>
-    public void Accelerate(Vector2 direction)
+    protected void Move()
     {
-        //calculate our force to add
-        Vector2 forceToAdd = direction * acceleration * Time.deltaTime;
-        // apply forceToAdd to ourRigidbody
-        ourRigidbody.AddForce(forceToAdd);
+        transform.Translate(movementDirection * moveSpeed * Time.deltaTime);
     }
 }

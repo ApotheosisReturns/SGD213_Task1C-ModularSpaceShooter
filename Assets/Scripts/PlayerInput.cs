@@ -1,88 +1,82 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 /// <summary>
-/// PlayerInput handles all of the player specific input behaviour, and passes the input information
-/// to the appropriate scripts.
+/// PlayerInput handles all player-specific input behaviour and passes
+/// input information to the appropriate components.
 /// </summary>
 public class PlayerInput : MonoBehaviour
 {
-
-    // local references
+    // Local references
     private PlayerMovement playerMovement;
-
     private WeaponBase weapon;
+
     public WeaponBase Weapon
     {
-        get
-        {
-            return weapon;
-        }
-
-        set
-        {
-            weapon = value;
-        }
+        get => weapon;
+        set => weapon = value;
     }
 
-    void Start()
+    private void Start()
     {
         playerMovement = GetComponent<PlayerMovement>();
         weapon = GetComponent<WeaponBase>();
     }
 
-    void Update()
+    private void Update()
     {
-        // read our horizontal input axis
-        float horizontalInput = Input.GetAxis("Horizontal");
-        // if movement input is not zero
-        if (horizontalInput != 0.0f)
-        {
-            // ensure our playerMovementScript is populated to avoid errors
-            if (playerMovement != null)
-            {
-                // pass our movement input to our playerMovementScript
-                playerMovement.MovePlayer(horizontalInput * Vector2.right);
-            }
-        }
+        HandleMovementInput();
+        HandleFireInput();
+    }
 
-        // if we press the Fire1 button
-        if (Input.GetButton("Fire1"))
+    /// <summary>
+    /// Reads movement input and passes it to PlayerMovement.
+    /// PlayerMovement handles the actual movement logic.
+    /// </summary>
+    private void HandleMovementInput()
+    {
+        float x = Input.GetAxisRaw("Horizontal");
+        float y = Input.GetAxisRaw("Vertical");
+
+        if (playerMovement != null)
         {
-            // if our shootingScript is populated
-            if (weapon != null)
-            {
-                // tell shootingScript to shoot
-                weapon.Shoot();
-            }
+            playerMovement.SetInputDirection(new Vector2(x, y));
         }
     }
 
     /// <summary>
-    /// SwapWeapon handles creating a new WeaponBase component based on the given weaponType. This
-    /// will popluate the newWeapon's controls and remove the existing weapon ready for usage.
+    /// Reads fire input and triggers the weapon.
     /// </summary>
-    /// <param name="weaponType">The given weaponType to swap our current weapon to, this is an enum in WeaponBase.cs</param>
+    private void HandleFireInput()
+    {
+        if (Input.GetButton("Fire1") && weapon != null)
+        {
+            weapon.Fire();
+        }
+    }
+
+    /// <summary>
+    /// Swaps the player's weapon by adding a new WeaponBase component
+    /// and removing the old one.
+    /// </summary>
     public void SwapWeapon(WeaponType weaponType)
     {
-        // make a new weapon dependent on the weaponType
         WeaponBase newWeapon = null;
+
         switch (weaponType)
         {
             case WeaponType.machineGun:
                 newWeapon = gameObject.AddComponent<WeaponMachineGun>();
                 break;
+
             case WeaponType.tripleShot:
                 newWeapon = gameObject.AddComponent<WeaponTripleShot>();
                 break;
         }
 
-        // update the data of our newWeapon with that of our current weapon
-        newWeapon.UpdateWeaponControls(weapon);
-        // remove the old weapon
+        // Remove the old weapon
         Destroy(weapon);
-        // set our current weapon to be the newWeapon
+
+        // Assign the new weapon
         weapon = newWeapon;
     }
 }

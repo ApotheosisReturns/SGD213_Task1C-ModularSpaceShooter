@@ -1,37 +1,27 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class AIMoveAndShoot : MonoBehaviour {
+/// <summary>
+/// Simple AI that moves using EnemyMovement and fires a weapon.
+/// </summary>
+public class AIMoveAndShoot : MonoBehaviour
+{
+    [SerializeField] private EnemyMovement movement;
+    [SerializeField] private WeaponBase weapon;
+    [SerializeField] private float fireInterval = 2f;
 
-    // state
-    private Vector2 movementDirection;
+    private float timer;
 
-    // local references
-    private EnemyMovement enemyMovement;
-    private WeaponBase weapon;
+    private void Update()
+    {
+        // Movement is now handled INSIDE EnemyMovement.Update()
+        // so we do NOT call MoveEnemy() anymore.
 
-    void Start() {
-        // populate our local references
-        enemyMovement = GetComponent<EnemyMovement>();
-        weapon = GetComponent<WeaponBase>();
+        timer += Time.deltaTime;
 
-        // get a random direction between South-East and South-West
-        float x = Random.Range(-0.5f, 0.5f);
-        float y = -0.5f;
-        movementDirection = new Vector2(x, y).normalized; // ensure it is normalised
-    }
-
-    // Update is called once per frame
-    void Update () {
-        // move our enemy if we have a EnemyMovement component attached
-        if (enemyMovement != null) {
-            enemyMovement.MoveEnemy(movementDirection);
-        }
-
-        // shoot if we have a IWeapon component attached
-        if (weapon != null) {
-            weapon.Shoot();
+        if (timer >= fireInterval)
+        {
+            weapon.Fire();
+            timer = 0f;
         }
     }
 }

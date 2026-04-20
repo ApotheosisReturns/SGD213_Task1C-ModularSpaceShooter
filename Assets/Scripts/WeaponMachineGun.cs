@@ -1,22 +1,25 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class WeaponMachineGun : WeaponBase {
+public class WeaponMachineGun : WeaponBase
+{
+    [SerializeField] private GameObject projectilePrefab;
+    [SerializeField] private float fireRate = 0.1f;
 
-    /// <summary>
-    /// Shoot will spawn a new bullet, provided enough time has passed compared to our fireDelay.
-    /// </summary>
-    public override void Shoot() {
-        // get the current time
-        float currentTime = Time.time;
+    private float timer;
 
-        // if enough time has passed since our last shot compared to our fireDelay, spawn our bullet
-        if (currentTime - lastFiredTime > fireDelay) {
-            // create our bullet
-            GameObject newBullet = Instantiate(bullet, bulletSpawnPoint.position, transform.rotation);
-            // update our shooting state
-            lastFiredTime = currentTime;
+    private void Update()
+    {
+        timer += Time.deltaTime;
+
+        if (timer >= fireRate)
+        {
+            Fire();
+            timer = 0f;
         }
+    }
+
+    public override void Fire()
+    {
+        Instantiate(projectilePrefab, transform.position, transform.rotation);
     }
 }
