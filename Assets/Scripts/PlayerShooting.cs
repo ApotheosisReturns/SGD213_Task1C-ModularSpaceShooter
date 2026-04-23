@@ -1,25 +1,19 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
-public class ShootingScript : MonoBehaviour
+public class PlayerShooting : MonoBehaviour
 {
     [SerializeField] private Transform firePoint;
     [SerializeField] private GameObject bulletPrefab;
 
     private bool tripleShotActive = false;
 
-    // Fire rate control
-    private float fireCooldown = 1f;   // 1 shot per second
-    private float nextFireTime = 0f;
-
     private void Update()
     {
-        if (Input.GetButton("Fire1") && Time.time >= nextFireTime)
+        if (Input.GetButton("Fire1"))
         {
-            nextFireTime = Time.time + fireCooldown;
-
             if (tripleShotActive)
-                StartCoroutine(FireTripleVolley());
+                FireTripleShot();
             else
                 FireSingleShot();
         }
@@ -30,16 +24,29 @@ public class ShootingScript : MonoBehaviour
         Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
     }
 
-    private IEnumerator FireTripleVolley()
+    private void FireTripleShot()
     {
+        StartCoroutine(TripleVolley());
+    }
+
+    private IEnumerator TripleVolley()
+    {
+        // Bullet 1
         Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+
+        // Small delay
         yield return new WaitForSeconds(0.05f);
 
+        // Bullet 2
         Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+
+        // Small delay
         yield return new WaitForSeconds(0.05f);
 
+        // Bullet 3
         Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
     }
+
 
     public void ActivateTripleShot(float duration)
     {

@@ -1,27 +1,41 @@
 ﻿using UnityEngine;
 
-/// <summary>
-/// Simple AI that moves using EnemyMovement and fires a weapon.
-/// </summary>
 public class AIMoveAndShoot : MonoBehaviour
 {
     [SerializeField] private EnemyMovement movement;
-    [SerializeField] private WeaponBase weapon;
+
+    [Header("Weapon Settings")]
+    [SerializeField] private GameObject enemyProjectilePrefab;   // <-- You can now assign your bullet here
+    [SerializeField] private Transform firePoint;                // <-- Optional: assign enemy fire point
     [SerializeField] private float fireInterval = 2f;
 
     private float timer;
 
     private void Update()
     {
-        // Movement is now handled INSIDE EnemyMovement.Update()
-        // so we do NOT call MoveEnemy() anymore.
-
         timer += Time.deltaTime;
 
         if (timer >= fireInterval)
         {
-            weapon.Fire();
+            FireEnemyBullet();
             timer = 0f;
         }
+    }
+
+    private void FireEnemyBullet()
+    {
+        if (enemyProjectilePrefab == null)
+        {
+            Debug.LogError("Enemy projectile prefab is NOT assigned!");
+            return;
+        }
+
+        if (firePoint == null)
+        {
+            Debug.LogError("Enemy firePoint is NOT assigned!");
+            return;
+        }
+
+        Instantiate(enemyProjectilePrefab, firePoint.position, firePoint.rotation);
     }
 }

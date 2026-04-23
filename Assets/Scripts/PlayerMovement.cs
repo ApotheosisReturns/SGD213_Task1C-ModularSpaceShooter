@@ -1,21 +1,18 @@
 ﻿using UnityEngine;
 
-/// <summary>
-/// Player-specific movement logic.
-/// Reads input and passes direction to EngineBase.
-/// </summary>
 public class PlayerMovement : EngineBase
 {
-    private void Update()
+    private float horizontalInput;
+
+    public void SetHorizontalInput(float x)
     {
-        Move();
+        horizontalInput = x;
     }
 
-    /// <summary>
-    /// Receives input direction from PlayerInput and updates movementDirection.
-    /// </summary>
-    public void SetInputDirection(Vector2 input)
+    private void Update()
     {
-        movementDirection = new Vector3(input.x, input.y, 0).normalized;
+        // Only move left/right
+        movementDirection = new Vector2(horizontalInput, 0f);
+        Move();
     }
 }

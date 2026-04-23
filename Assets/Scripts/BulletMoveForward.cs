@@ -15,14 +15,14 @@ public class BulletMoveForward : MonoBehaviour
 
     private void Start()
     {
-        // Set initial upward velocity
-        rb.velocity = Vector2.up * initialVelocity;
+        // Use the bullet's own forward direction
+        rb.velocity = transform.up * initialVelocity;
     }
 
     private void FixedUpdate()
     {
-        // Apply continuous upward force
-        Vector2 force = Vector2.up * acceleration * Time.fixedDeltaTime;
+        // Apply force in the bullet's forward direction
+        Vector2 force = transform.up * acceleration * Time.fixedDeltaTime;
         rb.AddForce(force);
     }
 }

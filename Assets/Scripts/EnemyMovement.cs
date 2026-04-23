@@ -1,9 +1,5 @@
 ﻿using UnityEngine;
 
-/// <summary>
-/// Enemy movement logic.
-/// Moves toward a target (e.g., the player).
-/// </summary>
 public class EnemyMovement : EngineBase
 {
     [SerializeField] private Transform target;
@@ -12,7 +8,13 @@ public class EnemyMovement : EngineBase
     {
         if (target == null) return;
 
-        movementDirection = (target.position - transform.position).normalized;
+        // Move ONLY horizontally toward the player's X position
+        float horizontal = Mathf.Sign(target.position.x - transform.position.x);
+
+        // No vertical movement
+        float vertical = 0f;
+
+        movementDirection = new Vector2(horizontal, vertical);
 
         Move();
     }
